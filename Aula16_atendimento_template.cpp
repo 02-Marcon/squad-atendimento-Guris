@@ -33,7 +33,7 @@ struct No {
 };
 
 // ════════════════════════════════════════════════════════════════
-// R1 · FILA DE PACIENTES (estrutura FIFO com dois ponteiros)
+// git config --global user.email "seuemail@exemplo.com" (estrutura FIFO com dois ponteiros)
 // ════════════════════════════════════════════════════════════════
 // Pacientes entram pelo "trás" e saem pela "frente"
 // Dentro da mesma urgência, quem chegou primeiro é atendido primeiro
@@ -106,19 +106,27 @@ struct PilhaHistorico {
     // TODO 4: Implemente push(nome)
     //         Empilha um atendimento concluído
     void push(const string& nome) {
-        // ...
+        No* novo = new No(nome);
+        novo->prox = topo;
+        topo = novo;
     }
 
     // TODO 5: Implemente pop()
     //         Desempilha e retorna o último atendimento
     string pop() {
-        return "";  // substitua pelo retorno correto
+        if (isEmpty()) return "";
+        No* temp = topo;
+        string nome = temp->nome;
+        topo = topo->prox;
+        delete temp;
+        return nome;
     }
 
     // TODO 6: Implemente peek()
     //         Retorna o último atendimento SEM remover
     string peek() const {
-        return "";  // substitua pelo retorno correto
+        if (isEmpty()) return "";
+        return topo->nome;
     }
 
     bool isEmpty() const { return topo == nullptr; }
