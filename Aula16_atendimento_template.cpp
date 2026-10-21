@@ -33,7 +33,7 @@ struct No {
 };
 
 // ════════════════════════════════════════════════════════════════
-// git config --global user.email "seuemail@exemplo.com" (estrutura FIFO com dois ponteiros)
+// R2 · FILA DE PACIENTES (estrutura FIFO com dois ponteiros)
 // ════════════════════════════════════════════════════════════════
 // Pacientes entram pelo "trás" e saem pela "frente"
 // Dentro da mesma urgência, quem chegou primeiro é atendido primeiro
@@ -148,15 +148,27 @@ struct ListaMedicos {
     // TODO 7: Implemente adicionarMedico(nome)
     //         Adiciona um médico no final da lista
     void adicionarMedico(const string& nome) {
-        // Dica: percorra até o último nó e insira no final
-        // ...
+        No* novo = new No(nome);
+        if (head == nullptr) {
+            head = novo;
+        } else {
+            No* p = head;
+            while (p->prox != nullptr) {
+                p = p->prox;
+            }
+            p->prox = novo;
+        }
     }
 
     // TODO 8: Implemente chamarMedico()
     //         Remove e retorna o primeiro médico disponível
     string chamarMedico() {
-        // Dica: remova do início (como removerInicio da lista)
-        return "";  // substitua pelo retorno correto
+        if (head == nullptr) return "";
+        No* temp = head;
+        string nome = temp->nome;
+        head = head->prox;
+        delete temp;
+        return nome;
     }
 
     // TODO 9: Implemente percorrer()
@@ -164,9 +176,18 @@ struct ListaMedicos {
     void percorrer(const string& prefixo = "") const {
         if (!prefixo.empty()) cout << prefixo << ": ";
         // Dica: percorra com No* p = head; while(p) { ... p = p->prox; }
-        cout << "(lista vazia)\n";
+        No* p = head;
+        if (p == nullptr) {
+            cout << "(lista vazia)\\n";
+            return;
+        }
+        while (p != nullptr) {
+            cout << p->nome;
+            if (p->prox != nullptr) cout << " -> ";
+            p = p->prox;
+        }
+        cout << "\\n";
     }
-
     bool temMedico() const { return head != nullptr; }
 
     ~ListaMedicos() {
