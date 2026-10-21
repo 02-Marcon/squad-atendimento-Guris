@@ -213,7 +213,15 @@ void imprimirHistorico(PilhaHistorico& hist) {
         cout << "(nenhum atendimento registrado)\n";
         return;
     }
-    // ...
+    PilhaHistorico auxiliar;
+    while (!hist.isEmpty()) {
+        string atendimento = hist.pop();
+        cout << atendimento << "\\n";
+        auxiliar.push(atendimento);
+    }
+    while (!auxiliar.isEmpty()) {
+        hist.push(auxiliar.pop());
+    }
 }
 
 // ════════════════════════════════════════════════════════════════
