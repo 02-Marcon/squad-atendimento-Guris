@@ -230,7 +230,7 @@ void imprimirHistorico(PilhaHistorico& hist) {
 
 int main() {
     cout << "╔═══════════════════════════════════════════════════╗\n";
-    cout << "║  Sistema de Atendimento — Squad ________________  ║\n";
+    cout << "║  Sistema de Atendimento — Squad guris             ║\n";
     cout << "╚═══════════════════════════════════════════════════╝\n\n";
 
     // Crie as estruturas
