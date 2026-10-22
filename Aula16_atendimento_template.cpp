@@ -33,7 +33,7 @@ struct No {
 };
 
 // ════════════════════════════════════════════════════════════════
-// R2 · FILA DE PACIENTES (estrutura FIFO com dois ponteiros)
+// R1 · FILA DE PACIENTES (estrutura FIFO com dois ponteiros)
 // ════════════════════════════════════════════════════════════════
 // Pacientes entram pelo "trás" e saem pela "frente"
 // Dentro da mesma urgência, quem chegou primeiro é atendido primeiro
@@ -45,8 +45,10 @@ struct FilaPacientes {
     // TODO 1: Implemente enqueue(nome, urgencia)
     //         Paciente entra no final da fila
     void enqueue(const string& nome, int urgencia) {
+        // Dica: crie um novo No, atualize 'tras' e 'frente' se necessário
+        // ...
         No* novo = new No(nome, urgencia);
-        if (isEmpty()) {
+        if (tras == nullptr) {
             frente = novo;
             tras = novo;
         } else {
@@ -60,7 +62,7 @@ struct FilaPacientes {
     string dequeue() {
         // Dica: guarde o nome antes de deletar, atualize 'frente'
         //       se frente ficar nullptr, atualize 'tras' também!
-        if (isEmpty()) return "";
+        if (frente == nullptr) return "";
         No* temp = frente;
         string nome = temp->nome;
         frente = frente->prox;
@@ -71,7 +73,8 @@ struct FilaPacientes {
 
     // TODO 3: Implemente frente_peek() — ver quem está na frente sem remover
     string frente_peek() const {
-        if (isEmpty()) return "";
+        // substitua pelo retorno correto
+        if (frente == nullptr) return "";
         return frente->nome;
     }
 
@@ -79,6 +82,7 @@ struct FilaPacientes {
 
     // BÔNUS: Implemente tamanho() que conta os nós na fila
     int tamanho() const {
+        // ...
         int total = 0;
         No* p = frente;
         while (p != nullptr) {
@@ -93,7 +97,6 @@ struct FilaPacientes {
     }
 };
 
-
 // ════════════════════════════════════════════════════════════════
 // R2 · HISTÓRICO COM PILHA (estrutura LIFO)
 // ════════════════════════════════════════════════════════════════
@@ -106,6 +109,7 @@ struct PilhaHistorico {
     // TODO 4: Implemente push(nome)
     //         Empilha um atendimento concluído
     void push(const string& nome) {
+        // ...
         No* novo = new No(nome);
         novo->prox = topo;
         topo = novo;
@@ -114,7 +118,8 @@ struct PilhaHistorico {
     // TODO 5: Implemente pop()
     //         Desempilha e retorna o último atendimento
     string pop() {
-        if (isEmpty()) return "";
+        // substitua pelo retorno correto
+        if (topo == nullptr) return "";
         No* temp = topo;
         string nome = temp->nome;
         topo = topo->prox;
@@ -125,7 +130,8 @@ struct PilhaHistorico {
     // TODO 6: Implemente peek()
     //         Retorna o último atendimento SEM remover
     string peek() const {
-        if (isEmpty()) return "";
+        // substitua pelo retorno correto
+        if (topo == nullptr) return "";
         return topo->nome;
     }
 
@@ -148,21 +154,23 @@ struct ListaMedicos {
     // TODO 7: Implemente adicionarMedico(nome)
     //         Adiciona um médico no final da lista
     void adicionarMedico(const string& nome) {
+        // Dica: percorra até o último nó e insira no final
+        // ...
         No* novo = new No(nome);
         if (head == nullptr) {
             head = novo;
-        } else {
-            No* p = head;
-            while (p->prox != nullptr) {
-                p = p->prox;
-            }
-            p->prox = novo;
+            return;
         }
+        No* p = head;
+        while (p->prox != nullptr) p = p->prox;
+        p->prox = novo;
     }
 
     // TODO 8: Implemente chamarMedico()
     //         Remove e retorna o primeiro médico disponível
     string chamarMedico() {
+        // Dica: remova do início (como removerInicio da lista)
+        // substitua pelo retorno correto
         if (head == nullptr) return "";
         No* temp = head;
         string nome = temp->nome;
@@ -178,7 +186,7 @@ struct ListaMedicos {
         // Dica: percorra com No* p = head; while(p) { ... p = p->prox; }
         No* p = head;
         if (p == nullptr) {
-            cout << "(lista vazia)\\n";
+            cout << "(lista vazia)\n";
             return;
         }
         while (p != nullptr) {
@@ -186,8 +194,9 @@ struct ListaMedicos {
             if (p->prox != nullptr) cout << " -> ";
             p = p->prox;
         }
-        cout << "\\n";
+        cout << "\n";
     }
+
     bool temMedico() const { return head != nullptr; }
 
     ~ListaMedicos() {
@@ -213,15 +222,14 @@ void imprimirHistorico(PilhaHistorico& hist) {
         cout << "(nenhum atendimento registrado)\n";
         return;
     }
+    // ...
     PilhaHistorico auxiliar;
     while (!hist.isEmpty()) {
-        string atendimento = hist.pop();
-        cout << atendimento << "\\n";
-        auxiliar.push(atendimento);
+        string registro = hist.pop();
+        cout << registro << "\n";
+        auxiliar.push(registro);
     }
-    while (!auxiliar.isEmpty()) {
-        hist.push(auxiliar.pop());
-    }
+    while (!auxiliar.isEmpty()) hist.push(auxiliar.pop());
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -230,50 +238,85 @@ void imprimirHistorico(PilhaHistorico& hist) {
 
 int main() {
     cout << "╔═══════════════════════════════════════════════════╗\n";
-    cout << "║  Sistema de Atendimento — Squad guris             ║\n";
+    cout << "║  Sistema de Atendimento — Squad ________________  ║\n";
     cout << "╚═══════════════════════════════════════════════════╝\n\n";
 
     // Crie as estruturas
-    FilaPacientes  fila;
+    FilaPacientes fila;
     PilhaHistorico historico;
-    ListaMedicos   medicos;
+    ListaMedicos medicos;
+    string nome;
+    char resposta;
+    int urgencia;
 
     // ── Cadastrar médicos (R3) ────────────────────────────────
-    medicos.adicionarMedico("Dra. Ana Lima");
-    medicos.adicionarMedico("Dr. Bruno Costa");
-    medicos.adicionarMedico("Dra. Carla Ramos");
+    do {
+        cout << "Digite o nome do médico: ";
+        getline(cin, nome);
+        while (nome.empty()) {
+            cout << "O nome não pode ficar vazio. Digite o nome do médico: ";
+            getline(cin, nome);
+        }
+        medicos.adicionarMedico(nome);
+        cout << "Deseja cadastrar mais um médico? (s/n): ";
+        cin >> resposta;
+        cin.ignore(10000, '\n');
+    } while (resposta == 's' || resposta == 'S');
+
     medicos.percorrer("Médicos disponíveis");
 
     // ── Pacientes chegam na fila (R1) ─────────────────────────
-    cout << "\nPacientes chegando:\n";
-    fila.enqueue("Eduardo (urgencia=3)", 3);
-    fila.enqueue("Fernanda (urgencia=1)", 1);
-    fila.enqueue("Gabriel (urgencia=2)", 2);
-    fila.enqueue("Helena (urgencia=1)", 1);
+    do {
+        cout << "\nDigite o nome do paciente: ";
+        getline(cin, nome);
+        while (nome.empty()) {
+            cout << "O nome não pode ficar vazio. Digite o nome do paciente: ";
+            getline(cin, nome);
+        }
+        do {
+            cout << "Nível de urgência (1=baixa, 2=média, 3=alta): ";
+            cin >> urgencia;
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(10000, '\n');
+                urgencia = 0;
+            } else {
+                cin.ignore(10000, '\n');
+            }
+            if (urgencia < 1 || urgencia > 3)
+                cout << "Urgência inválida. Digite 1, 2 ou 3.\n";
+        } while (urgencia < 1 || urgencia > 3);
+        fila.enqueue(nome, urgencia);
+        cout << "Deseja cadastrar mais um paciente? (s/n): ";
+        cin >> resposta;
+        cin.ignore(10000, '\n');
+    } while (resposta == 's' || resposta == 'S');
 
-    cout << "Próximo a ser atendido: " << fila.frente_peek() << "\n";
-    cout << "Total na fila: " << fila.tamanho() << "\n";
+    cout << "\nTotal de pacientes na fila: " << fila.tamanho() << "\n";
+    cout << "Próximo paciente na fila: " << fila.frente_peek() << "\n";
 
     // ── Simulação de atendimentos ─────────────────────────────
-    cout << "\nSimulação de atendimentos:\n";
+    cout << "\n=== Atendimentos ===\n";
     int atend = 1;
     while (!fila.isEmpty() && medicos.temMedico()) {
         string paciente = fila.dequeue();
-        string medico   = medicos.chamarMedico();
-
-        cout << "  [" << atend++ << "] " << medico
-             << " atende " << paciente << "\n";
-
+        string medico = medicos.chamarMedico();
+        cout << "[" << atend++ << "] " << medico << " atende " << paciente << "\n";
         // Registra no histórico (R2)
-        historico.push(medico + " → " + paciente);
-
+        historico.push(medico + " -> " + paciente);
         // Médico volta para a fila depois de atender
         // (descomente após implementar adicionarMedico)
         // medicos.adicionarMedico(medico);
+        medicos.adicionarMedico(medico);
     }
 
+    if (!fila.isEmpty())
+        cout << "Não há médicos disponíveis para atender todos os pacientes.\n";
+
     // ── Último atendimento (peek na pilha) ────────────────────
-    cout << "\nÚltimo atendimento registrado (peek): " << historico.peek() << "\n";
+    cout << "\nÚltimo atendimento registrado (peek): ";
+    if (historico.isEmpty()) cout << "(nenhum atendimento registrado)\n";
+    else cout << historico.peek() << "\n";
 
     // ── Relatório final (R4) ──────────────────────────────────
     imprimirHistorico(historico);
@@ -286,7 +329,6 @@ int main() {
 
     return 0;
 }
-
 
 // ════════════════════════════════════════════════════════════════
 // CHECKLIST DE ENTREGA
